@@ -14,10 +14,11 @@ export default function MobileSidebar({ categories }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close drawer on navigation
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   // Prevent background scroll when mobile drawer is open
   useEffect(() => {

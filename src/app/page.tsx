@@ -4,9 +4,7 @@ import {
   BookOpen,
   ArrowRight,
   ShieldCheck,
-  Zap,
   Code2,
-  FolderGit2,
   Sparkles,
   FileCode2,
 } from "lucide-react";
@@ -127,7 +125,7 @@ export default async function HomePage() {
                   Standardy QA & ISTQB
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Zasady inżynierii testów, piramida Mike'a Cohna, poziomy i strategie weryfikacji oprogramowania.
+                  Zasady inżynierii testów, piramida Mike&apos;a Cohna, poziomy i strategie weryfikacji oprogramowania.
                 </p>
               </div>
             </div>

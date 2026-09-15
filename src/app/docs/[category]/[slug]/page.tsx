@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Clock, Calendar, Tag, Bookmark } from "lucide-react";
+import { Clock, Calendar, Tag } from "lucide-react";
 import {
   getDocBySlug,
   getAllDocPaths,

@@ -89,7 +89,7 @@ export default function Navbar({
             </Link>
 
             <a
-              href="https://github.com"
+              href="https://github.com/viktorpykacz/CodeAssure"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"

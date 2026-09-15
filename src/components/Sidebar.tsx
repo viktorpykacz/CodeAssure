@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import {
   ChevronDown,
   ChevronRight,
-  FileText,
   Search,
   CheckSquare,
   Terminal,
@@ -82,7 +81,7 @@ export default function Sidebar({ categories, onItemClick }: SidebarProps) {
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {filteredCategories.length === 0 ? (
           <div className="text-center py-8 text-xs text-slate-500">
-            Brak wyników dla "{filterQuery}"
+            Brak wyników dla &quot;{filterQuery}&quot;
           </div>
         ) : (
           filteredCategories.map((category) => {
@@ -123,7 +122,8 @@ export default function Sidebar({ categories, onItemClick }: SidebarProps) {
                   <ul className="mt-1 pl-3 space-y-1 border-l border-slate-800/60 ml-3.5">
                     {category.docs.map((doc) => {
                       const docHref = `/docs/${category.slug}/${doc.slug}`;
-                      const isActive = pathname === docHref;
+                      const normalizedPath = pathname?.replace(/\/$/, "") || "";
+                      const isActive = normalizedPath === docHref;
 
                       return (
                         <li key={doc.slug}>

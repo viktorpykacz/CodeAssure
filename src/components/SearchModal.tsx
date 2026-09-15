@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, X, FileText, ArrowRight, Tag } from "lucide-react";
+import { Search, X, ArrowRight, Tag } from "lucide-react";
 import type { DocMeta } from "@/lib/markdown";
 
 interface SearchModalProps {
@@ -15,11 +15,17 @@ export default function SearchModal({ docs, isOpen, onClose }: SearchModalProps)
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen) {
+      setQuery("");
+    }
+  }
+
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
 
@@ -92,7 +98,7 @@ export default function SearchModal({ docs, isOpen, onClose }: SearchModalProps)
             </div>
           ) : results.length === 0 ? (
             <div className="py-12 text-center text-slate-500 text-sm">
-              Brak artykułów pasujących do <span className="text-slate-300 font-semibold">"{query}"</span>
+              Brak artykułów pasujących do <span className="text-slate-300 font-semibold">&quot;{query}&quot;</span>
             </div>
           ) : (
             results.map((doc) => (

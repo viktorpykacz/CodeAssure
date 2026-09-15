@@ -1,5 +1,5 @@
 import { redirect, notFound } from "next/navigation";
-import { getCategoryDocs, getAllCategories, formatCategoryTitle } from "@/lib/markdown";
+import { getCategoryDocs, getAllCategories } from "@/lib/markdown";
 
 interface CategoryPageProps {
   params: Promise<{
