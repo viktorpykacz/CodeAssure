@@ -1,0 +1,35 @@
+Act as an expert Frontend Web Developer and Software Architect. Your task is to build a modern, local Knowledge Base and Documentation Portal.
+
+TECHNOLOGY STACK:
+- Framework: Next.js (App Router)
+- Language: TypeScript
+- Styling: Tailwind CSS
+- Markdown parsing: `react-markdown`, `gray-matter` (for frontmatter), `rehype-highlight` (for code syntax highlighting), `remark-gfm` (for tables and lists).
+
+PROJECT GOAL:
+Create a web portal that dynamically reads, parses, and renders local Markdown (.md) files. The portal will serve as a categorized knowledge base for Software Testing, .NET/C# programming, interview questions, and general IT concepts.
+
+DATA ARCHITECTURE (Local Filesystem):
+The app should read markdown files from a local directory named `/content` at the root of the project. 
+The subfolders inside `/content` will represent categories (e.g., `/content/testing`, `/content/dotnet`, `/content/interview-questions`). 
+Each Markdown file should support YAML Frontmatter (e.g., `title`, `description`, `date`, `tags`).
+
+REQUIRED FEATURES & UI:
+1. Layout: A classic documentation layout with a sticky Left Sidebar for navigation, and a Main Content area for reading the markdown.
+2. Dynamic Navigation (Sidebar): The sidebar must dynamically generate its links by scanning the `/content` folder. It should group links by their parent folder names (e.g., a dropdown or section for "Testing", another for ".NET"). Format folder names nicely (e.g., capitalize, replace hyphens with spaces).
+3. Dynamic Routing: Use Next.js catch-all or dynamic routes (e.g., `/docs/[category]/[slug]`) to serve the markdown files based on their physical path in the `/content` folder.
+4. Markdown Rendering: 
+   - Render the markdown content beautifully in the main area.
+   - Ensure code blocks have syntax highlighting (use a dark theme for code blocks).
+   - Use Tailwind's `@tailwindcss/typography` plugin (prose) to style the markdown output (headings, paragraphs, lists, tables).
+5. Home Page: A welcoming landing page displaying grid cards of available categories, acting as shortcuts to the documentation.
+6. Responsive Design: The sidebar should turn into a hamburger menu on mobile devices.
+
+INITIALIZATION INSTRUCTIONS:
+1. Initialize the Next.js project with Tailwind CSS.
+2. Install necessary markdown dependencies (`react-markdown`, `gray-matter`, `rehype-highlight`, `remark-gfm`, `@tailwindcss/typography`).
+3. Write a utility function (e.g., `lib/markdown.ts`) that reads the file system using `fs` and `path` to get all files, categories, and parse frontmatter.
+4. Create the Layout, Sidebar component, and the dynamic `page.tsx` for displaying the content.
+5. Provide a sample markdown file in `/content/testing/what-is-testing.md` with appropriate frontmatter so I can test it immediately.
+
+Write clean, modular, and well-commented code. Prioritize best practices for Next.js App Router (using Server Components for reading files).
