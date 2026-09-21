@@ -12,6 +12,8 @@ import {
   HelpCircle,
   Folder,
   Cpu,
+  Coffee,
+  Layout,
   BookOpen,
 } from "lucide-react";
 import type { CategoryInfo } from "@/lib/markdown";
@@ -25,6 +27,8 @@ interface SidebarProps {
 const ICON_MAP: Record<string, React.ElementType> = {
   CheckSquare,
   Terminal,
+  Coffee,
+  Layout,
   HelpCircle,
   Cpu,
   Folder,

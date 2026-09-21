@@ -6,6 +6,8 @@ import {
   HelpCircle,
   Folder,
   Cpu,
+  Coffee,
+  Layout,
   ArrowRight,
   FileText,
 } from "lucide-react";
@@ -14,6 +16,8 @@ import type { CategoryInfo } from "@/lib/markdown";
 const ICON_MAP: Record<string, React.ElementType> = {
   CheckSquare,
   Terminal,
+  Coffee,
+  Layout,
   HelpCircle,
   Cpu,
   Folder,

@@ -4,7 +4,30 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import dynamic from "next/dynamic";
 import CodeBlock from "./CodeBlock";
+
+const MermaidDiagram = dynamic(() => import("./MermaidDiagram"), {
+  ssr: false,
+  loading: () => (
+    <div className="my-8 rounded-xl border border-slate-800 bg-[#0c101a] p-8 flex flex-col items-center justify-center gap-2 text-slate-500 text-xs">
+      <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+      <span>Ładowanie diagramu...</span>
+    </div>
+  ),
+});
+
+function extractText(node: React.ReactNode): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (node && typeof node === "object" && "props" in node) {
+    return extractText(
+      (node as { props: { children?: React.ReactNode } }).props.children
+    );
+  }
+  return "";
+}
 
 interface MarkdownRendererProps {
   content: string;
@@ -34,6 +57,14 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
                   {children}
                 </code>
               );
+            }
+
+            const match = /language-(\w+)/.exec(className || "");
+            const language = match ? match[1] : "";
+
+            if (language === "mermaid") {
+              const chartText = extractText(children);
+              return <MermaidDiagram chart={chartText} />;
             }
 
             return (

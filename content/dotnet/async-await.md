@@ -3,7 +3,7 @@ title: "Programowanie Asynchroniczne w C# (async / await)"
 description: "Głębokie omówienie słów kluczowych async i await, maszyny stanów generowanej przez kompilator, Task, ValueTask oraz wątków puli ThreadPool."
 date: "2026-03-12"
 tags: [".NET", "C#", "Async", "Threading", "Performance"]
-order: 1
+order: 2
 ---
 
 # Programowanie Asynchroniczne w C# (async / await)

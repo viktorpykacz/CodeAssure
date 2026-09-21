@@ -3,7 +3,7 @@ title: "Piramida Testów (Test Pyramid)"
 description: "Koncepcja piramidy testów wg Mike'a Cohna - proporcje między testami jednostkowymi, integracyjnymi a E2E oraz anty-wzorzec loda rożka."
 date: "2026-03-14"
 tags: ["QA", "Architecture", "Test Pyramid", "Best Practices"]
-order: 2
+order: 3
 ---
 
 # Piramida Testów (Test Pyramid)

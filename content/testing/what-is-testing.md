@@ -3,7 +3,7 @@ title: "Czym jest testowanie oprogramowania?"
 description: "Kompleksowe wprowadzenie do zapewniania jakości (QA), poziomów testów, celów i zasad testowania według standardu ISTQB."
 date: "2026-03-15"
 tags: ["QA", "Testing", "ISTQB", "Fundamentals", "Quality Assurance"]
-order: 1
+order: 2
 ---
 
 # Czym jest testowanie oprogramowania?

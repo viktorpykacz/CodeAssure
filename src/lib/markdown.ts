@@ -61,6 +61,16 @@ const CATEGORY_METADATA: Record<
     description: "Zaawansowane techniki programowania w C#, architektura .NET, async/await oraz wzorce projektowe.",
     iconName: "Terminal",
   },
+  java: {
+    title: "Java & JVM Ecosystem",
+    description: "Nowoczesna Java (Java 17 - 21+ LTS), architektura JVM, programowanie obiektowe, rekordy, strumienie oraz wątki wirtualne.",
+    iconName: "Coffee",
+  },
+  frontend: {
+    title: "Frontend Development",
+    description: "Podstawy technologii webowych: semantyczny HTML5, nowoczesny CSS (Flexbox, Grid), architektura stylów oraz biblioteka jQuery.",
+    iconName: "Layout",
+  },
   "interview-questions": {
     title: "Interview Questions",
     description: "Przygotowanie do rozmów rekrutacyjnych: SOLID, algorytmy, zarządzanie pamięcią i architektura.",
@@ -172,7 +182,7 @@ export async function getAllCategories(): Promise<CategoryInfo[]> {
   }
 
   // Sort categories by predefined priority if available
-  const knownOrder = ["testing", "dotnet", "interview-questions", "general-it"];
+  const knownOrder = ["testing", "dotnet", "java", "frontend", "interview-questions", "general-it"];
   categories.sort((a, b) => {
     const indexA = knownOrder.indexOf(a.slug);
     const indexB = knownOrder.indexOf(b.slug);
