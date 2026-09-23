@@ -81,6 +81,11 @@ const CATEGORY_METADATA: Record<
     description: "Koncepcje architektoniczne, protokoły sieciowe, bezpieczeństwo oraz podstawy inżynierii oprogramowania.",
     iconName: "Cpu",
   },
+  python: {
+    title: "Python Programming",
+    description: "Architektura CPython, model obiektowy, współbieżność (GIL, asyncio, multiprocessing), zarządzanie pamięcią oraz optymalizacja.",
+    iconName: "Terminal",
+  },
 };
 
 /**
@@ -182,7 +187,7 @@ export async function getAllCategories(): Promise<CategoryInfo[]> {
   }
 
   // Sort categories by predefined priority if available
-  const knownOrder = ["testing", "dotnet", "java", "frontend", "interview-questions", "general-it"];
+  const knownOrder = ["testing", "dotnet", "java", "python", "frontend", "interview-questions", "general-it"];
   categories.sort((a, b) => {
     const indexA = knownOrder.indexOf(a.slug);
     const indexB = knownOrder.indexOf(b.slug);

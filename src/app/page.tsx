@@ -35,14 +35,13 @@ export default async function HomePage() {
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-tight sm:leading-tight">
             Architektura wiedzy dla{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
-              QA & Inżynierów .NET
+              Ludzi w IT
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Czytaj i eksploruj lokalne pliki Markdown z pełnym wsparciem dla Frontmatter,
-            podświetlania składni kodu, dynamicznej nawigacji oraz pytań rekrutacyjnych.
+            Serwis z wiedzą i typowymi pytaniami rekruterskimi            
           </p>
 
           {/* CTA Buttons */}
@@ -52,7 +51,7 @@ export default async function HomePage() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Przeglądaj Dokumentację</span>
+              <span>Przejdź do serwisu</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -60,7 +59,7 @@ export default async function HomePage() {
               href="#categories"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm transition-all"
             >
-              <span>Zobacz Kategorie</span>
+              <span>Zobacz dostępne Kategorie</span>
             </a>
           </div>
 
@@ -82,7 +81,7 @@ export default async function HomePage() {
               <span className="text-2xl font-extrabold text-emerald-400 font-mono">
                 100%
               </span>
-              <span className="text-xs text-slate-400 mt-1">Lokalnie & Offline</span>
+              <span className="text-xs text-slate-400 mt-1">Działa 100 % lokalnie i offline</span>
             </div>
           </div>
         </div>
