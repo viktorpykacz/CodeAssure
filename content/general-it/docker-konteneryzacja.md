@@ -25,9 +25,11 @@ Kompleksowe kompendium inżynierskie poświęcone technologii Docker i mechanizm
    - Wolumeny danych: Named Volumes, Bind Mounts i `tmpfs`
    - Sterowniki sieciowe: `bridge`, `host`, `overlay`, `macvlan`, `none`
 5. [Projektowanie i Optymalizacja Dockerfile (Best Practices)](#5-projektowanie-i-optymalizacja-dockerfile-best-practices)
-   - Multi-stage Builds
-   - Kolejność instrukcji i mechanika Docker Build Cache
-   - Bezpieczeństwo kontenerów (Non-root user, minimalne obrazy bazowe)
+   - Multi-stage Builds i minimalne obrazy bazowe
+   - Mechanika Docker Build Cache
+   - Zmienne środowiskowe: `ARG` vs `ENV` i bezpieczeństwo sekretów (BuildKit Secrets)
+   - Monitorowanie żywotności: Instrukcja `HEALTHCHECK`
+   - Orkiestracja lokalna: Docker Compose v2 (depends_on z warunkiem healthcheck)
 6. [Pytania Rekrutacyjne z Odpowiedziami (FAQ Interview)](#6-pytania-rekrutacyjne-z-odpowiedziami-faq-interview)
    - Pytania Podstawowe i Średniozaawansowane (Mid)
    - Pytania Zaawansowane i Architektoniczne (Senior / Lead)
@@ -216,6 +218,85 @@ RUN npm install
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+```
+
+---
+
+### 3. Zmienne Środowiskowe: `ARG` vs `ENV` i Bezpieczeństwo Sekretów
+Wielu inżynierów myli zakres działania `ARG` oraz `ENV`:
+* **`ARG` (Build-time):** Zmienna dostępna **wyłącznie podczas budowania obrazu** (`docker build --build-arg`). Nie jest dostępna wewnątrz działającego kontenera.
+* **`ENV` (Runtime & Build-time):** Zmienna utrwalana w metadanych obrazu i dostępna zarówno podczas budowania, jak i **wewnątrz uruchomionego kontenera**.
+
+> [!CAUTION]
+> **Nigdy nie przekazuj haseł ani tokenów API przez `ARG` lub `ENV`!**
+> Zarówno wartości `ARG`, jak i `ENV` są na stałe zapisywane w historii warstw obrazu. Każdy, kto posiada dostęp do obrazu, może odczytać sekrety za pomocą polecenia `docker history --no-trunc <image>` lub `docker inspect`.
+> 
+> **Prawidłowe rozwiązanie (BuildKit Secrets):**
+> ```dockerfile
+> # Składnia BuildKit bezpiecznego montowania sekretu tymczasowego
+> # Klucz montowany jest w RAM i NIE zostaje utrwalony w żadnej warstwie obrazu!
+> RUN --mount=type=secret,id=npmrc,target=/root/.npmrc \
+>     npm ci --only=production
+> ```
+> Wywołanie w CLI: `docker build --secret id=npmrc,src=.npmrc .`
+
+---
+
+### 4. Monitorowanie Żywotności: Instrukcja `HEALTHCHECK`
+Domyślnie Docker uznaje kontener za działający (`running`), dopóki proces główny (PID 1) nie zakończy działania. Jeśli aplikacja ulegnie zakleszczeniu (*Deadlock*) lub zwróci błąd 500, Docker nadal raportuje status `healthy / running`.
+
+Instrukcja `HEALTHCHECK` instruuje silnik Dockera, jak okresowo weryfikować stan aplikacji:
+```dockerfile
+# Sprawdzanie dostępności co 30s z timeoutem 3s i 3 próbami
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
+```
+* **Stany kontenera:** `starting` (podczas `start-period`), `healthy` (kod 0) oraz `unhealthy` (kod 1 po wyczerpaniu `retries`).
+* W przypadku statusu `unhealthy` Docker Compose lub orchestratory (Kubernetes/Swarm) mogą automatycznie zrestartować uszkodzony kontener.
+
+---
+
+### 5. Orkiestracja Lokalna: Docker Compose v2
+Docker Compose pozwala na deklaratywne definiowanie i uruchamianie aplikacji wielokontenerowych za pomocą pliku `compose.yaml`.
+W wersji **Compose v2** (napisanej w Go jako wtyczka CLI `docker compose` zamiast starego skryptu Python `docker-compose`), wprowadzono zaawansowane mechanizmy sterowania kolejnością uruchamiania serwisów:
+
+```yaml
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    # Uruchom API dopiero wtedy, gdy baza danych pomyślnie przejdzie HEALTHCHECK!
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_net
+
+volumes:
+  db_data:
+
+networks:
+  app_net:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
 ```
 
 ---

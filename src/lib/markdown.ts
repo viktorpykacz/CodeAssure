@@ -86,6 +86,16 @@ const CATEGORY_METADATA: Record<
     description: "Architektura CPython, model obiektowy, współbieżność (GIL, asyncio, multiprocessing), zarządzanie pamięcią oraz optymalizacja.",
     iconName: "Terminal",
   },
+  "c-cpp": {
+    title: "C & C++ Programming",
+    description: "Programowanie systemowe i niskopoziomowe: zarządzanie pamięcią, wskaźniki, model pamięci, RAII, szablony, nowoczesny C++ (C++11 do C++23) oraz pytania rekrutacyjne.",
+    iconName: "Cpu",
+  },
+  "ai-ml": {
+    title: "AI & Machine Learning",
+    description: "Fundamenty uczenia maszynowego (Supervised/Unsupervised), matematyka ML, Deep Learning, sieci neuronowe, architektura Transformerów, MLOps oraz pytania rekrutacyjne.",
+    iconName: "Cpu",
+  },
 };
 
 /**
