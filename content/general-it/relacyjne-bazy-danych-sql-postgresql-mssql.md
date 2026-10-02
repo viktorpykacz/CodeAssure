@@ -371,6 +371,41 @@ W PostgreSQL operacja `UPDATE` nie modyfikuje wiersza w miejscu, lecz wstawia no
 
 ---
 
+#### P7: Wysoka Dostępność (High Availability) i Disaster Recovery: Jak porównać Microsoft SQL Server Always On Availability Groups z ekosystemem PostgreSQL (Streaming Replication & Patroni)?
+**Odpowiedź:**
+W systemach infrastruktury krytycznej wymagana jest odporność na awarie z zerową utratą danych (RPO = 0) oraz minimalnym czasem przestoju (RTO rzędu sekund):
+* **Microsoft SQL Server (Always On Availability Groups):**
+  - Rozwiązanie zintegrowane natywnie z silnikiem bazy danych i klastrem Windows Server Failover Clustering (WSFC) lub Pacemaker w systemie Linux.
+  - Replikacja na poziomie grup baz danych (Database Groups), z możliwością odczytu na węzłach pomocniczych (*Readable Secondaries* z automatycznym przekierowaniem ruchu `ReadOnlyRoutingConnectionUrl`).
+  - Wspiera tryb synchroniczny (RPO = 0, transakcja zatwierdzana w węźle primary dopiero po potwierdzeniu zapisu w dzienniku transakcyjnym LDF repliki pomocniczej) oraz asynchroniczny (minimalny narzut na latency zapisu, idealny do replikacji geograficznej Disaster Recovery).
+  - Wymaga licencji Enterprise Edition i infrastruktury Active Directory / quorum witnesses.
+* **PostgreSQL (Physical Streaming Replication + Patroni + PgBouncer):**
+  - PostgreSQL w jądrze posiada fizyczną replikację strumieniową (Streaming Replication) opartą na przesyłaniu rekordów WAL z węzła Primary do węzłów Standby (synchroniczną lub asynchroniczną z `synchronous_commit`).
+  - Ponieważ sam PostgreSQL nie posiada wbudowanego menedżera klastra i mechanizmu automatycznego przełączania (Failover) z ochroną przed zjawiskiem Split-Brain, standardem korporacyjnym jest **Patroni** zintegrowany z rozproszonym magazynem konsensusu (DCS: **etcd** lub **Consul**).
+  - Patroni monitoruje stan bazy, zarządza liderem i w razie awarii automatycznie awansuje replikę do roli Primary, a puler połączeń **PgBouncer** natychmiast przekierowuje ruch z aplikacji .NET bez konieczności restartu serwisów.
+
+---
+
+#### P8: Jak różni się obsługa transakcji DDL (modyfikacji schematu: `CREATE`, `ALTER`, `DROP`) w PostgreSQL i MS SQL Server i jaki ma to wpływ na wdrożenia produkcyjne Zero-Downtime?
+**Odpowiedź:**
+* **PostgreSQL:** Posiada niemal **w 100% transakcyjne DDL** (z wyjątkiem pojedynczych komend jak `CREATE DATABASE`, `VACUUM` czy `CREATE INDEX CONCURRENTLY`). Oznacza to, że migracja schematu (np. dodanie tabeli, zmiana kolumn, dodanie kluczy obcych) może być opakowana w `BEGIN ... COMMIT`. Jeśli jakakolwiek operacja w skrypcie migracji zawiedzie, cały schemat jest natychmiast i bezśladowo wycofywany (`ROLLBACK`), a baza pozostaje w nienaruszonym stanie. Ponadto dodawanie kolumny z wartością domyślną `DEFAULT` od PG 11 nie blokuje tabeli ani nie przepisuje danych (metadane w katalogu).
+* **MS SQL Server:** Wspiera transakcje DDL dla większości operacji tabelowych, ale niektóre komendy systemowe lub operacje na indeksach pełnotekstowych wykraczają poza transakcję. Ponadto operacje `ALTER TABLE` w MS SQL mogą częściej wymagać ekskluzywnej blokady schematu (`Sch-M - Schema Modification Lock`), która potrafi zakleszczyć się z długo działającymi zapytaniami `SELECT`.
+* **Wpływ na CI/CD:** W PostgreSQL migracje EF Core są bezpieczniejsze transakcyjnie, ale dodawanie indeksów na produkcyjnych tabelach wielomilionowych wymaga użycia składni `CREATE INDEX CONCURRENTLY` (co w EF Core wymaga wyłączenia automatycznej transakcji migracji: `migrationBuilder.Sql("CREATE INDEX CONCURRENTLY ...", suppressTransaction: true)`).
+
+---
+
+#### P9: Architektura korporacyjna: Jakie kryteria inżynierskie decydują o wyborze między Microsoft SQL Server a PostgreSQL jako standardem bazy danych?
+**Odpowiedź:**
+* **Wybierz Microsoft SQL Server, gdy:**
+  - Organizacja ma głęboką integrację z ekosystemem Microsoft (Active Directory, Azure Synapse, Reporting Services SSRS, SSIS).
+  - Wymagane są unikalne funkcjonalności enterprise, takie jak *Always Encrypted with Secure Enclaves*, zintegrowana obsługa *Temporal Tables* (tabele temporalne wersjonowane czasowo wbudowane w silnik) czy gotowe klastrowanie Always On AG wspierane przez oficjalny support producenta 24/7/365.
+* **Wybierz PostgreSQL, gdy:**
+  - Kluczowa jest niezależność licencyjna (Open-Source, brak kosztów licencji na rdzeń, redukcja TCO w architekturach mikroserwisowych).
+  - Istnieje potrzeba wykorzystania bogatego ekosystemu rozszerzeń: **`pgvector`** (do wyszukiwania semantycznego i embeddingów AI), **`TimescaleDB`** (skrajnie wydajna telemetria time-series dla urządzeń OT), **`PostGIS`** (zaawansowane dane geoprzestrzenne), zaawansowane indeksowanie JSONB (GIN).
+  - Wymagana jest wielochmurowa elastyczność i natywna praca w kontenerach na platformach Linux / Kubernetes.
+
+---
+
 ### Scenariusze Awaryjne i Live-fire Troubleshooting
 
 #### Scenariusz 1: Zapytanie z dnia na dzień zaczęło wykonywać się 60 sekund zamiast 100 ms bez żadnych zmian w kodzie aplikacji. Jakie kroki podejmujesz?
